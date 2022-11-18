@@ -107,6 +107,20 @@
         </div>
     </div>
 
+    <div class="row m-2">
+        <h2 class="text-center checkout">Checkout</h2>
+        <div class="d-flex flex-wrap justify-content-center">
+            Name:
+            <label class="form-text-label m-2">
+                <input class="form-text-input" type="text" name="order" />
+            </label>
+            <label class="form-text-label m-2">
+                Phone
+                <input class="form-text-input" type="text" name="order" />
+            </label>
+            <Button class="btn btn-success m-2">Checkout</Button>
+        </div>
+    </div>
 </template>
 
 <script>
@@ -115,7 +129,72 @@ import lessons from "./data/lessons";
 
 export default {
     name: "App",
+    data() {
+        return {
+            lessons: lessons,
+            shoppingCartLessons: [],
+            sortWith: "subject",
+            orderWith: "asc",
+        };
+    },
+    methods: {
+        add(id) {
+            this.lessons.find((lesson) => {
+                if (lesson.id == id && lesson.spaces > 0) {
+                    let { ...newlesson } = lesson
+                    lesson.spaces--
+                    newlesson.spaces = 1
+                    let done = this.shoppingCartLessons.find((slesson) => {
+                        if (slesson.id == id) {
+                            slesson.spaces++
+                            return true
+                        }
+                    })
+                    if (!done) {
+                        this.shoppingCartLessons.push(newlesson)
+                    }
+                }
+            })
+        },
+        remove(id) {
+            this.shoppingCartLessons
 
+            for (let i = 0; i < this.shoppingCartLessons.length; i++) {
+                if (this.shoppingCartLessons[i].id == id) {
+                    if (this.shoppingCartLessons[i].spaces <= 1) {
+                        this.shoppingCartLessons = []
+                        this.shoppingCartLessons.splice(i)
+                    } else {
+                        this.shoppingCartLessons[i].spaces--;
+                    }
+                    this.lessons.find((lesson) => {
+                        if (lesson.id == id) {
+                            lesson.spaces++
+                            return true
+                        }
+                    })
+                }
+            }
+        }
+    },
+    computed: {
+        sortedLessons() {
+            if (this.lessons.length < 1) return this.lessons;
+
+            let sortwith = this.sortWith ?? "subject";
+            let ordwith = this.orderWith ?? 'asc';
+
+            return this.lessons.sort(function (a, b) {
+                let aa = ordwith === "asc" ? a : b;
+                let bb = ordwith === "asc" ? b : a;
+                if (typeof aa[sortwith] === "number") {
+                    return (aa[sortwith] - bb[sortwith]);
+                } else {
+                    return ((aa[sortwith] < bb[sortwith]) ? -1 : ((aa[sortwith] > bb[sortwith]) ? 1 : 0));
+                }
+            });
+        },
+    },
 };
 
 </script>
