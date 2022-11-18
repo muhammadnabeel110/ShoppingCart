@@ -62,7 +62,8 @@
                     </div>
 
                     <div class="d-flex justify-content-center mt-2">
-                        <button class="btn btn-secondary" @click="add(lesson.id)" :disabled="lesson.spaces < 1">Add to card</button>
+                        <button class="btn btn-secondary" @click="add(lesson.id)" :disabled="lesson.spaces < 1">Add to
+                            card</button>
                     </div>
                 </div>
             </div>
@@ -157,12 +158,9 @@ export default {
             })
         },
         remove(id) {
-            this.shoppingCartLessons
-
             for (let i = 0; i < this.shoppingCartLessons.length; i++) {
                 if (this.shoppingCartLessons[i].id == id) {
                     if (this.shoppingCartLessons[i].spaces <= 1) {
-                        this.shoppingCartLessons = []
                         this.shoppingCartLessons.splice(i)
                     } else {
                         this.shoppingCartLessons[i].spaces--;
