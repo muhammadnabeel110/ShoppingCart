@@ -1,6 +1,7 @@
 <template>
-
     <div class="row m-2">
+        <Lessons :lessons="sorted" :add="(id) => { add(id) }" />
+
         <div class="col-sm-2 my-5">
             <div class="row">
                 <h5>Sort by</h5>
@@ -32,101 +33,20 @@
                 </label>
             </div>
         </div>
-        <div class="col">
-            <div class="d-flex flex-wrap">
-                <div v-for="lesson of sortedLessons" :key="lesson.id" class="lesson-card-comp col m-3 p-3 border">
-                    <div class="row">
-                        <div class="col-8">
-                            <div>
-                                <strong>Subject: </strong>
-                                <span>{{ lesson.subject }}</span>
-                            </div>
-                            <div>
-                                <strong>Location:</strong>
-                                <span>{{ lesson.location }}</span>
-                            </div>
-                            <div>
-                                <strong>Price:</strong>
-                                <span>£{{ lesson.price }}</span>
-                            </div>
-                            <div>
-                                <strong>Spaces:</strong>
-                                <span>{{ lesson.spaces }}</span>
-                            </div>
-                        </div>
-
-                        <div class="col-4">
-                            <i :class="lesson.icon"></i>
-
-                        </div>
-                    </div>
-
-                    <div class="d-flex justify-content-center mt-2">
-                        <button class="btn btn-secondary" @click="add(lesson.id)" :disabled="lesson.spaces < 1">Add to
-                            card</button>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
 
-    <div class="row m-2">
-        <h2 class="text-center m-3 shopping-cart">Shopping Cart</h2>
-        <div class="col">
-            <div class="d-flex flex-wrap">
-                <div v-for="lesson of shoppingCartLessons" :key="lesson.id" class="lesson-card-comp col m-3 p-3 border">
-                    <div class="row">
-                        <div class="col-8">
-                            <div>
-                                <strong>Subject:</strong>
-                                <span>{{ lesson.subject }}</span>
-                            </div>
-                            <div>
-                                <strong>Location:</strong>
-                                <span>{{ lesson.location }}</span>
-                            </div>
-                            <div>
-                                <strong>Price:</strong>
-                                <span>£{{ lesson.price }}</span>
-                            </div>
-                            <div>
-                                <strong>Spaces:</strong>
-                                <span>{{ lesson.spaces }}</span>
-                            </div>
-                        </div>
 
-                        <div class="col-4">
-                            <i :class="lesson.icon"></i>
-                        </div>
-                    </div>
+    <ShoppingCart :shoppingCartLessons="shoppingCartLessons" :callback="(id) => { remove(id) }" />
 
-                    <div class="d-flex justify-content-center mt-2">
-                        <button class="btn btn-secondary" @click="remove(lesson.id)">Remove</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <Checkout :len="shoppingCartLessons.length" :callback="() => { shoppingCartLessons = [] }" />
 
-    <div class="row m-2">
-        <h2 class="text-center checkout">Checkout</h2>
-        <div class="d-flex flex-wrap justify-content-center">
-            Name:
-            <label class="form-text-label m-2">
-                <input class="form-text-input" type="text" name="order" />
-            </label>
-            <label class="form-text-label m-2">
-                Phone
-                <input class="form-text-input" type="text" name="order" />
-            </label>
-            <Button class="btn btn-success m-2">Checkout</Button>
-        </div>
-    </div>
 </template>
 
 <script>
-
 import lessons from "./data/lessons";
+import Checkout from "./Checkout.vue"
+import ShoppingCart from "./ShoppingCart.vue"
+import Lessons from "./Lessons.vue";
 
 export default {
     name: "App",
@@ -137,6 +57,11 @@ export default {
             sortWith: "subject",
             orderWith: "asc",
         };
+    },
+    components: {
+        Checkout: Checkout,
+        ShoppingCart: ShoppingCart,
+        Lessons
     },
     methods: {
         add(id) {
@@ -176,7 +101,7 @@ export default {
         }
     },
     computed: {
-        sortedLessons() {
+        sorted() {
             if (this.lessons.length < 1) return this.lessons;
 
             let sortwith = this.sortWith ?? "subject";
